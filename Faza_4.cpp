@@ -744,6 +744,8 @@ int main() {
 		cout << "Tranzactia 1 si Tranzactia 2 au numere diferite de tranzactii." << endl;
 	}
 
+	cout << endl;
+	cout << "Vector clasa Magazin------------------- " << endl;
 	int nrMagazine;
 	cout << "Introduceti numarul magazinelor: ";
 	cin >> nrMagazine;
@@ -759,6 +761,8 @@ int main() {
 
 	delete[]vectorMagazin;
 
+	cout << endl;
+	cout << "Vector clasa Client------------------- " << endl;
 	int nrClienti;
 	cout << "Introduceti numarul clientilor: ";
 	cin >> nrClienti;
@@ -773,6 +777,8 @@ int main() {
 
 	delete[]vectorClient;
 
+	cout << endl;
+	cout << "Vector clasa Tranzactie------------------- " << endl;
 	int nrTranzactii;
 	cout << "Introduceti numarul tranzactiilor: ";
 	cin >> nrTranzactii;
@@ -786,7 +792,9 @@ int main() {
 	}
 
 	delete[]vectorTranzactie;
-
+	
+	cout << endl;
+	cout << "Matrice clasa Magazin------------------- " << endl;
 	int numarDeLinii, numarDeColoane;
 	cout << "Introduceti numarul de linii pentru matricea clasei Magazin: ";
 	cin >> numarDeLinii;
