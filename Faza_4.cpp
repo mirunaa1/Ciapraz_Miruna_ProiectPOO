@@ -77,6 +77,34 @@ public:
 		return afisare;
 	}
 
+	//operator>>
+	friend istream& operator>>(istream& citire, Magazin& m) {
+		cout << "Nume magazin: ";
+		citire >> m.numeMagazin;
+		cout << endl;
+		cout << "Numar angajati: ";
+		citire >> m.numarAngajati;
+		cout << endl;
+		cout << "Adresa: ";
+		citire >> m.adresa;
+		cout << endl;
+		cout << "Numar produse: ";
+		citire >> m.numarProduse;
+		cout << endl;
+		cout << "Inventar: ";
+		if (m.inventar != NULL)
+			delete[]m.inventar;
+		m.inventar = new int[m.numarProduse];
+		for (int i = 0;i < m.numarProduse;i++)
+		{
+			cout << "Inventarul " << i + 1 << " este: ";
+			citire>> m.inventar[i];
+		}
+		cout << endl;
+		return citire;
+
+	}
+
 	//Destructor
 	~Magazin() {
 		if (inventar != NULL) {
@@ -243,7 +271,7 @@ public:
 	void istoriculCumparaturilor() {
 		cout << "Istoricul cumparaturilor al clientului " << numeClient << endl;
 		for (int i = 0;i < numarComanda;i++) {
-			cout << "Sesiunea de cumparaturi " << i + 1 << " este in valoare de " << istoricCumparaturi[i] << " lei."<<endl;
+			cout << "Sesiunea de cumparaturi " << i + 1 << " este in valoare de " << istoricCumparaturi[i] << " lei." << endl;
 		}
 	}
 
@@ -251,13 +279,33 @@ public:
 	friend ostream& operator<<(ostream& afisare, const Client& c) {
 		afisare << "Nume client: " << c.numeClient << endl;
 		afisare << "Numar telefon: " << c.numarTelefon << endl;
-		afisare << "Total cheltuit: " << c.numarComanda << endl;
+		afisare << "Numar comanda: " << c.numarComanda << endl;
 		afisare << "Istoric cumparaturi: ";
 		for (int i = 0;i < c.numarComanda;i++) {
 			afisare << c.istoricCumparaturi[i] << " ";
 		}
 		afisare << endl;
 		return afisare;
+	}
+
+	friend istream& operator>>(istream& citire, Client& c) {
+		cout << "Nume client: ";
+		citire >> c.numeClient;
+		cout << endl;
+		cout << "Numar telefon: ";
+		citire >> c.numarTelefon;
+		cout << endl;
+		cout << "Numar comanda: ";
+		citire >> c.numarComanda;
+		cout << endl;
+		cout << "Istoric cumparaturi: ";
+		c.istoricCumparaturi = new float[c.numarComanda];
+		for (int i = 0;i < c.numarComanda;i++) {
+			cout << "Istoricul cumparaturilor comenzii " << i + 1 << " este: " << endl;
+			citire >> c.istoricCumparaturi[i];
+		}
+		cout << endl;
+		return citire;
 	}
 
 	//Desctructor
@@ -433,6 +481,27 @@ public:
 		}
 		afisare << endl;
 		return afisare;
+	}
+
+	friend istream& operator>>(istream& citire, Tranzactie& t) {
+		cout << "Data tranzactie: ";
+		citire >> t.dataTranzactie;
+		cout << endl;
+		cout << "Numar tranzactie: ";
+		citire >> t.numarTranzactii;
+		cout << endl;
+		cout << "Metoda plata: ";
+		citire >> t.metodaPlata;
+		cout << endl;
+		cout << "Tranzactii: ";
+		t.tranzactii = new float[t.numarTranzactii];
+		for (int i = 0; i < t.numarTranzactii;i++) {
+			cout << "Tranzactia: " << i + 1 << " este: " << endl;
+			citire>>t.tranzactii[i];
+		}
+		cout << endl;
+		return citire;
+
 	}
 
 	//Destructor
@@ -653,7 +722,7 @@ int main() {
 	bool b1;
 	b1 = c3 < c4;
 	cout << b1 << endl << endl;
-	cout << "Operatorul != : "<<endl;
+	cout << "Operatorul != : " << endl;
 	if (c2 != c3) {
 		cout << "Client1 si Client2 sunt diferiti." << endl;
 	}
@@ -663,7 +732,7 @@ int main() {
 
 	cout << endl << "Operatori clasa Tranzactie--------------" << endl << endl << "Operatorul cast() : " << endl;
 	int op = (int)t3;
-	cout << op << endl<<endl;
+	cout << op << endl << endl;
 	cout << "Operatorul ++ (prefixat): " << endl;
 	t3++;
 	cout << "Numarul de tranzactii: " << t3.getNumarTranzactii() << endl << endl;
@@ -673,5 +742,73 @@ int main() {
 	}
 	else {
 		cout << "Tranzactia 1 si Tranzactia 2 au numere diferite de tranzactii." << endl;
+	}
+
+	int nrMagazine;
+	cout << "Introduceti numarul magazinelor: ";
+	cin >> nrMagazine;
+	Magazin* vectorMagazin = new Magazin[nrMagazine];
+	for (int i = 0; i < nrMagazine; i++) {
+		cout << "Magazinul " << i + 1 << ":" << endl;
+		cin >> vectorMagazin[i];
+	}
+
+	for (int i = 0; i < nrMagazine; i++) {
+		cout << vectorMagazin[i] << endl;
+	}
+
+	delete[]vectorMagazin;
+
+	int nrClienti;
+	cout << "Introduceti numarul clientilor: ";
+	cin >> nrClienti;
+	Client* vectorClient = new Client[nrClienti];
+	for (int i = 0; i < nrClienti; i++) {
+		cout << "Clientul " << i + 1 << ":" << endl;
+		cin >> vectorClient[i];
+	}
+	for (int i = 0; i < nrClienti; i++) {
+		cout << vectorClient[i] << endl;
+	}
+
+	delete[]vectorClient;
+
+	int nrTranzactii;
+	cout << "Introduceti numarul tranzactiilor: ";
+	cin >> nrTranzactii;
+	Tranzactie* vectorTranzactie = new Tranzactie[nrTranzactii];
+	for (int i = 0; i < nrTranzactii; i++) {
+		cout << "Tranzactia " << i + 1 << ":" << endl;
+		cin >> vectorTranzactie[i];
+	}
+	for (int i = 0; i < nrTranzactii; i++) {
+		cout << vectorTranzactie[i] << endl;
+	}
+
+	delete[]vectorTranzactie;
+
+	int numarDeLinii, numarDeColoane;
+	cout << "Introduceti numarul de linii pentru matricea clasei Magazin: ";
+	cin >> numarDeLinii;
+	cout << "Introduceti numarul de coloane pentru matricea clasei Magazin: ";
+	cin >> numarDeColoane;
+	Magazin** matriceMagazin = new Magazin * [numarDeLinii];
+	for (int i = 0; i < numarDeLinii; i++) {
+		matriceMagazin[i] = new Magazin[numarDeColoane];
+	}
+
+	for (int i = 0; i < numarDeLinii; i++) {
+		for (int j = 0; j < numarDeColoane; j++) {
+			cout << "Introduceti informatiile magazinului [" << i + 1 << "][" << j + 1 << "]:\n";
+			cin >> matriceMagazin[i][j];
+
+		}
+	}
+
+	for (int i = 0; i < numarDeLinii; i++) {
+		for (int j = 0; j < numarDeColoane; j++) {
+			cout << "Magazinul [" << i + 1 << "][" << j + 1 << "]:\n";
+			cout << matriceMagazin[i][j];
+		}
 	}
 }
