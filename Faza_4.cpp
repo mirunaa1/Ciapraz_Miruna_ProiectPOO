@@ -1,12 +1,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include<iostream>
 #include<string>
-using std::cout;
-using std::cin;
-using std::istream;
-using std::ostream;
-using std::string;
-using std::endl;
+#include<fstream>
+using namespace std;
 
 
 class Magazin {
@@ -98,7 +94,7 @@ public:
 		for (int i = 0;i < m.numarProduse;i++)
 		{
 			cout << "Inventarul " << i + 1 << " este: ";
-			citire>> m.inventar[i];
+			citire >> m.inventar[i];
 		}
 		cout << endl;
 		return citire;
@@ -213,13 +209,75 @@ public:
 
 	//operator index
 	int& operator[] (int index) {
-		if (index >= 0 && index <= this->numarProduse)
+		if (index >= 0 && index < this->numarProduse)
 			return this->inventar[index];
 	}
 
 	bool operator>=(const Magazin& m) {
 		return(this->numarAngajati >= m.numarAngajati);
 	}
+
+	void serializare(string numeFisier)
+	{
+		ofstream fisierBinar(numeFisier, ios::out, ios::binary);
+		int lungimeNumeMagazin = this->numeMagazin.size();
+		fisierBinar.write((char*)&lungimeNumeMagazin, sizeof(lungimeNumeMagazin));
+		fisierBinar.write(this->numeMagazin.c_str(), lungimeNumeMagazin + 1);
+
+		fisierBinar.write((char*)&this->numarAngajati, sizeof(numarAngajati));
+		
+		int lungimeAdresa = this->adresa.size();
+		fisierBinar.write((char*)&lungimeAdresa, sizeof(lungimeAdresa));
+		fisierBinar.write(this->adresa.c_str(), lungimeAdresa + 1);
+
+		fisierBinar.write((char*)&this->numarProduse, sizeof(numarProduse));
+
+		for (int i = 0; i < this->numarProduse; i++)
+		{
+			fisierBinar.write((char*)&this->inventar[i], sizeof(inventar[i]));
+		}
+		fisierBinar.close();
+	}
+
+	void deserializare(string numeFisier)
+	{
+		ifstream fisierBinar(numeFisier, ios::in, ios::binary);
+		if (fisierBinar.is_open())
+		{
+			if (inventar != NULL) {
+				delete[]inventar;
+			}
+			int lungimeNumeMagazin = 0;
+			fisierBinar.read((char*)&lungimeNumeMagazin, sizeof(lungimeNumeMagazin));
+			char* aux = new char[lungimeNumeMagazin + 1];
+			fisierBinar.read(aux, lungimeNumeMagazin + 1);
+			this->numeMagazin = aux;
+			delete[]aux;
+
+			fisierBinar.read((char*)&this->numarAngajati, sizeof(numarAngajati));
+
+			int lungimeAdresa = 0;
+			fisierBinar.read((char*)&lungimeAdresa, sizeof(lungimeAdresa));
+			char* aux1 = new char[lungimeAdresa + 1];
+			fisierBinar.read(aux1, lungimeAdresa + 1);
+			this->adresa = aux1;
+			delete[]aux1;
+
+			fisierBinar.read((char*)&this->numarProduse, sizeof(numarProduse));
+
+			this->inventar = new int[this->numarProduse];
+			for (int i = 0; i < this->numarProduse; i++)
+			{
+				fisierBinar.read((char*)&this->inventar[i], sizeof(inventar[i]));
+			}
+			fisierBinar.close();
+		}
+		else
+		{
+			cout << "Fisierul binar nu a fost gasit!";
+		}
+	}
+
 };
 
 //functie globala
@@ -416,6 +474,64 @@ public:
 		return !(this->numeClient == c.numeClient && this->numarTelefon == c.numarTelefon);
 	}
 
+	void serializare(string numeFisier)
+	{
+		ofstream fisierBinar(numeFisier, ios::out, ios::binary);
+		int lungimeNumeClient = this->numeClient.size();
+		fisierBinar.write((char*)&lungimeNumeClient, sizeof(lungimeNumeClient));
+		fisierBinar.write(this->numeClient.c_str(), lungimeNumeClient + 1);
+
+		int lungimeNumarTelefon = this->numarTelefon.size();
+		fisierBinar.write((char*)&lungimeNumarTelefon, sizeof(lungimeNumarTelefon));
+		fisierBinar.write(this->numarTelefon.c_str(), lungimeNumarTelefon + 1);
+
+		fisierBinar.write((char*)&this->numarComanda, sizeof(numarComanda));
+
+		for (int i = 0; i < this->numarComanda; i++)
+		{
+			fisierBinar.write((char*)&this->istoricCumparaturi[i], sizeof(istoricCumparaturi[i]));
+		}
+		fisierBinar.close();
+	}
+
+	void deserializare(string numeFisier)
+	{
+		ifstream fisierBinar(numeFisier, ios::in, ios::binary);
+		if (fisierBinar.is_open())
+		{
+			if (istoricCumparaturi != NULL) {
+				delete[]istoricCumparaturi;
+			}
+			int lungimeNumeClient = 0;
+			fisierBinar.read((char*)&lungimeNumeClient, sizeof(lungimeNumeClient));
+			char* aux = new char[lungimeNumeClient + 1];
+			fisierBinar.read(aux, lungimeNumeClient + 1);
+			this->numeClient = aux;
+			delete[]aux;
+
+			int lungimeNumarTelefon = 0;
+			fisierBinar.read((char*)&lungimeNumarTelefon, sizeof(lungimeNumarTelefon));
+			char* aux1 = new char[lungimeNumarTelefon + 1];
+			fisierBinar.read(aux1, lungimeNumarTelefon + 1);
+			this->numarTelefon = aux1;
+			delete[]aux1;
+
+			fisierBinar.read((char*)&this->numarComanda, sizeof(numarComanda));
+
+			this->istoricCumparaturi = new float[this->numarComanda];
+			for (int i = 0; i < this->numarComanda; i++)
+			{
+				fisierBinar.read((char*)&this->istoricCumparaturi[i], sizeof(istoricCumparaturi[i]));
+			}
+			fisierBinar.close();
+		}
+		else
+		{
+			cout << "Fisierul binar nu a fost gasit!";
+		}
+	}
+
+
 
 };
 
@@ -497,7 +613,7 @@ public:
 		t.tranzactii = new float[t.numarTranzactii];
 		for (int i = 0; i < t.numarTranzactii;i++) {
 			cout << "Tranzactia: " << i + 1 << " este: " << endl;
-			citire>>t.tranzactii[i];
+			citire >> t.tranzactii[i];
 		}
 		cout << endl;
 		return citire;
@@ -603,8 +719,178 @@ public:
 		return this->numarTranzactii == t.numarTranzactii;
 	}
 
+	friend ofstream& operator<<(ofstream& afisare, const Tranzactie& t) {
+		afisare  << t.dataTranzactie << endl;
+		afisare  << t.numarTranzactii << endl;
+		afisare << t.metodaPlata << endl;
+		for (int i = 0;i < t.numarTranzactii;i++) {
+			afisare << t.tranzactii[i] << " ";
+		}
+		afisare << endl;
+		return afisare;
+	}
+
+	friend ifstream& operator>>(ifstream& citire, Tranzactie& t) {
+		citire >> ws;
+		getline(citire, t.dataTranzactie);
+		citire >> t.numarTranzactii;
+		citire >> ws;
+		getline(citire, t.metodaPlata);
+		t.tranzactii = new float[t.numarTranzactii];
+		for (int i = 0; i < t.numarTranzactii;i++) {
+			citire >> t.tranzactii[i];
+		}
+		return citire;
+	}
 
 };
+
+
+class Factura {
+private:
+	int nrTranzactii;
+	Tranzactie* tranzactii;
+	string numeClient;
+	float suma;
+
+public:
+	Factura() {
+		this->nrTranzactii = 0;
+		this->tranzactii = new Tranzactie[0];
+		this->numeClient = "Necunoscut ";
+		this->suma = 0;
+	}
+
+	Factura(int nrTranzactii, Tranzactie* tranzactii, string numeClient, float suma) {
+		this->nrTranzactii =nrTranzactii;
+		this->tranzactii = new Tranzactie[this->nrTranzactii];
+		for (int i = 0;i < this->nrTranzactii;i++) {
+			this->tranzactii[i] = tranzactii[i];
+		}
+		this->numeClient = numeClient;
+		this->suma = suma;
+	}
+
+	Factura(const Factura& f) {
+		this->nrTranzactii = f.nrTranzactii;
+		this->tranzactii = new Tranzactie[f.nrTranzactii];
+		for (int i = 0;i < f.nrTranzactii;i++) {
+			this->tranzactii[i] = f.tranzactii[i];
+		}
+		this->numeClient = f.numeClient;
+		this->suma = f.suma;
+	}
+
+	~Factura() {
+		if (this->tranzactii != NULL) {
+			delete[]this->tranzactii;
+		}
+	}
+
+	Factura& operator=(const Factura& f) {
+		if (this != &f) {
+			if (this->tranzactii != NULL) {
+				delete[]this->tranzactii;
+			}
+			this->nrTranzactii = f.nrTranzactii;
+			this->tranzactii = new Tranzactie[f.nrTranzactii];
+			for (int i = 0;i < f.nrTranzactii;i++) {
+				this->tranzactii[i] = f.tranzactii[i];
+			}
+			this->numeClient = f.numeClient;
+			this->suma = f.suma;
+		}
+		return *this;
+	}
+
+	friend ostream& operator<<(ostream& afisare, const Factura& f) {
+		afisare << "Nr Tranzactii " << f.nrTranzactii << endl;
+		afisare << "Tranzactii: ";
+		for (int i = 0;i < f.nrTranzactii;i++) {
+			afisare<<f.tranzactii[i]<<" ";
+		}
+		afisare << endl;
+		afisare << "Nume client: " << f.numeClient<<endl;
+		afisare << "Suma: " << f.suma << endl;
+
+		return afisare;
+	}
+
+	int getNrTranzactii() {
+		return this->nrTranzactii;
+	}
+
+	Tranzactie* getTranzactii() {
+		return this->tranzactii;
+	}
+
+	string getNumeClient() {
+		return this->numeClient;
+	}
+
+	float getSuma() {
+		return this->suma;
+	}
+
+	void setTranzactii(int nrTrazactii, Tranzactie* tranzactii) {
+		this->nrTranzactii = nrTranzactii;
+		this->tranzactii = new Tranzactie[this->nrTranzactii];
+		for (int i = 0;i < this->nrTranzactii;i++) {
+			this->tranzactii[i] = tranzactii[i];
+		}
+	}
+
+	void setNumeClient(string numeClient) {
+		this->numeClient = numeClient;
+	}
+
+	void setSuma(float suma) {
+		this->suma = suma;
+	}
+
+	//operator ++ prefixat
+	Factura& operator++()
+	{
+		this->suma++;
+		return *this;
+	}
+
+	//operator ==
+	bool operator ==(Factura f) {
+		return this->nrTranzactii == f.nrTranzactii;
+	}
+
+	bool operator>=(const Factura& f) {
+		return(this->nrTranzactii >= f.nrTranzactii);
+	}
+
+	friend ofstream& operator <<(ofstream& afisare, const Factura& f) {
+		afisare << f.nrTranzactii << endl;
+		for (int i = 0;i < f.nrTranzactii;i++) {
+			afisare << f.tranzactii[i] << " ";
+		}
+		afisare << endl;
+		afisare << f.numeClient << endl;
+		afisare << f.suma << endl;
+
+		return afisare;
+	}
+
+	friend ifstream& operator >>(ifstream& citire, Factura& f) {
+		if (f.tranzactii != NULL) {
+			delete[]f.tranzactii;
+		}
+		citire >> f.nrTranzactii;
+		f.tranzactii = new Tranzactie[f.nrTranzactii];
+		for (int i = 0;i < f.nrTranzactii;i++) {
+			citire >> f.tranzactii[i];
+		}
+		citire >> ws;
+		getline(citire, f.numeClient);
+		citire >> f.suma;
+		return citire;
+	}
+}; 
 
 int Magazin::nrMagazine = 10;
 int Client::numarClienti = 240;
@@ -718,7 +1004,6 @@ int main() {
 	c3 += c5;
 	cout << c3.getNumarComanda() << endl << endl;
 	cout << "Operatorul < : " << endl;
-
 	bool b1;
 	b1 = c3 < c4;
 	cout << b1 << endl << endl;
@@ -792,7 +1077,7 @@ int main() {
 	}
 
 	delete[]vectorTranzactie;
-	
+
 	cout << endl;
 	cout << "Matrice clasa Magazin------------------- " << endl;
 	int numarDeLinii, numarDeColoane;
@@ -819,4 +1104,85 @@ int main() {
 			cout << matriceMagazin[i][j];
 		}
 	}
+
+	Factura f1, f3;
+	cout << "Constructor fara parametrii (Factura): " << endl;
+	cout << f1 << endl;
+	
+	cout << endl << "Constructor de copiere------------" << endl;
+	Factura f2 = f1;
+	cout << "Factura 2: " << endl << f2 << endl;
+
+	cout << endl << endl << "Operator = ---------------------" << endl;
+	f3 = f1;
+	cout <<"Factura 3: "<< endl<< f3 << endl;
+
+	cout << endl << "Setteri si Getteri---------------------" << endl << endl;
+	f2.setNumeClient("Cristina ");
+	cout << f2.getNumeClient() << endl;
+	f2.setSuma(124.6);
+	cout << f2.getSuma() << endl;
+	cout << endl;
+
+	cout << endl << "Operatori clasa Factura--------------" << endl << endl << "Operatorul ++ (prefixat) : " << endl;
+	++f1;
+	cout << f1.getSuma() << endl << endl;
+	cout << "Operatorul == : " << endl;
+	if (f1 == f2) {
+		cout << "Factura 1 si Factura 2 au acelasi numar de tranzactii." << endl;
+	}
+	else {
+		cout << "Factura 1 si Factura 2 au numere diferite de tranzactii." << endl;
+	}
+	cout << endl;
+	cout << "Operatorul >=: " << endl;
+	bool fbool;
+	fbool = f2 >= f1;
+	cout << fbool << endl;
+	
+	cout<< endl << "Fisiere binare---------------------" << endl << endl;
+	Magazin MagazinBinar;
+	m3.serializare("fisierBinar.dat");
+	MagazinBinar.deserializare("fisierBinar.dat");
+	cout << MagazinBinar << endl<<endl;
+
+	Client ClientBinar;
+	c1.serializare("fisierBinar.dat");
+	ClientBinar.deserializare("fisierBinar.dat");
+	cout << ClientBinar << endl;
+
+	cout << endl << "Fisiere text---------------------" << endl << endl;
+	ofstream f("tranzactie.txt", ios::out);
+	f << t3 << endl;
+	cout << "Obiectul a fost scris in text!" << endl;
+	f.close();
+	ifstream g("tranzactie.txt", ios::in);
+	if (g.is_open())
+	{
+		g >> t1;
+		cout << "Obiectul a fost citit din text!" << endl;
+		g.close();
+	}
+	else
+	{
+		cout << "Fisierul nu exista!" << endl;
+	}
+	cout << t1 << endl;
+
+	ofstream fi("tranzactie.txt", ios::out);
+	fi << f2 << endl;
+	cout << "Obiectul a fost scris in text!" << endl;
+	fi.close();
+	ifstream gi("factura.txt", ios::in);
+	if (gi.is_open())
+	{
+		gi >> f1;
+		cout << "Obiectul a fost citit din text!" << endl;
+		gi.close();
+	}
+	else
+	{
+		cout << "Fisierul nu exista!" << endl;
+	}
+	cout << f1 << endl;
 }
