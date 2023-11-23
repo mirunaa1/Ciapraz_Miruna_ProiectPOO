@@ -1169,7 +1169,7 @@ int main() {
 	}
 	cout << t1 << endl;
 
-	ofstream fi("tranzactie.txt", ios::out);
+	ofstream fi("factura.txt", ios::out);
 	fi << f2 << endl;
 	cout << "Obiectul a fost scris in text!" << endl;
 	fi.close();
