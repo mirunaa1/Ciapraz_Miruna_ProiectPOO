@@ -225,7 +225,7 @@ public:
 		fisierBinar.write(this->numeMagazin.c_str(), lungimeNumeMagazin + 1);
 
 		fisierBinar.write((char*)&this->numarAngajati, sizeof(numarAngajati));
-		
+
 		int lungimeAdresa = this->adresa.size();
 		fisierBinar.write((char*)&lungimeAdresa, sizeof(lungimeAdresa));
 		fisierBinar.write(this->adresa.c_str(), lungimeAdresa + 1);
@@ -531,14 +531,68 @@ public:
 		}
 	}
 
-
-
 };
 
 //functie globala
 void afisareInformatiiClient(const Client& c) {
 	cout << "Nume client: " << c.numeClient << endl << "Numar telefon: " << c.numarTelefon << endl << "Numar comanda: " << c.numarComanda << endl;
 }
+
+
+class ClientFidel : public Client {
+	int idClient;
+	int puncteBonus;
+
+public:
+
+	ClientFidel() :Client() {
+		this->idClient = 0;
+		this->puncteBonus = 0;
+	}
+
+	ClientFidel(int idClient, int puncteBonus, int discountInitial, string numeClient, string numarTelefon, float numarComanda, float* istoricCumparaturi) : Client(discountInitial, numeClient, numarTelefon, numarComanda, istoricCumparaturi) {
+		this->idClient = idClient;
+		this->puncteBonus = puncteBonus;
+	}
+
+	ClientFidel(const ClientFidel& c) :Client(c) {
+		this->idClient = c.idClient;
+		this->puncteBonus = c.puncteBonus;
+		} 
+
+	ClientFidel operator=(const ClientFidel& c) {
+		if (this != &c) {
+			Client::operator=(c);
+			this->idClient = c.idClient;
+			this->puncteBonus = c.puncteBonus;
+		}
+		return *this;
+	}
+
+	int getIdClient() {
+		return this->idClient;
+	}
+
+	void setIdClient(int idClient) {
+		this->idClient = idClient;
+	}
+
+	int getPuncteBonus() {
+		return this->puncteBonus;
+	}
+
+	void setPuncteBonus(int puncteBonus) {
+		this->puncteBonus = puncteBonus;
+	}
+
+	friend ostream& operator<<(ostream& afisare, ClientFidel& c) {
+		afisare << (Client)c;
+		afisare << "Id client: " << c.idClient<<endl;
+		afisare << "Puncte bonus: " << c.puncteBonus << endl;
+		return afisare;
+	}
+};
+
 
 class Tranzactie {
 private:
@@ -720,8 +774,8 @@ public:
 	}
 
 	friend ofstream& operator<<(ofstream& afisare, const Tranzactie& t) {
-		afisare  << t.dataTranzactie << endl;
-		afisare  << t.numarTranzactii << endl;
+		afisare << t.dataTranzactie << endl;
+		afisare << t.numarTranzactii << endl;
 		afisare << t.metodaPlata << endl;
 		for (int i = 0;i < t.numarTranzactii;i++) {
 			afisare << t.tranzactii[i] << " ";
@@ -745,6 +799,45 @@ public:
 
 };
 
+class TranzactieOnline:public Tranzactie {
+	bool confirmareTranzactie;
+	
+public: 
+	TranzactieOnline() :Tranzactie() {
+		this->confirmareTranzactie = 0;
+	}
+
+	TranzactieOnline(bool confirmareTranzactie, int taxaTranzactieInitiala, string dataTranzactie, string metodaPlata, int numarTranzactii, float* tranzactii) : Tranzactie(taxaTranzactieInitiala, dataTranzactie, metodaPlata, numarTranzactii, tranzactii) {
+		this->confirmareTranzactie = confirmareTranzactie;
+	}
+
+	TranzactieOnline operator=(const TranzactieOnline& t) {
+		if (this != &t) {
+			Tranzactie::operator=(t);
+			this->confirmareTranzactie = t.confirmareTranzactie;
+		}
+		return *this;
+	}
+
+	TranzactieOnline(const TranzactieOnline& t) :Tranzactie(t) {
+		this->confirmareTranzactie = t.confirmareTranzactie;
+	}
+
+	friend ostream& operator<<(ostream& afisare, TranzactieOnline& t) {
+		afisare << (Tranzactie)t;
+		afisare << "Tranzactie confirmata " << t.confirmareTranzactie << endl;
+		return afisare;
+	}
+
+	void setConfirmareTranzactie(bool confirmareTranzactie) {
+		this->confirmareTranzactie = confirmareTranzactie;
+	}
+
+	bool getConfirmareTranzactie() {
+		return this->confirmareTranzactie;
+	}
+};
+
 
 class Factura {
 private:
@@ -762,7 +855,7 @@ public:
 	}
 
 	Factura(int nrTranzactii, Tranzactie* tranzactii, string numeClient, float suma) {
-		this->nrTranzactii =nrTranzactii;
+		this->nrTranzactii = nrTranzactii;
 		this->tranzactii = new Tranzactie[this->nrTranzactii];
 		for (int i = 0;i < this->nrTranzactii;i++) {
 			this->tranzactii[i] = tranzactii[i];
@@ -807,10 +900,10 @@ public:
 		afisare << "Nr Tranzactii " << f.nrTranzactii << endl;
 		afisare << "Tranzactii: ";
 		for (int i = 0;i < f.nrTranzactii;i++) {
-			afisare<<f.tranzactii[i]<<" ";
+			afisare << f.tranzactii[i] << " ";
 		}
 		afisare << endl;
-		afisare << "Nume client: " << f.numeClient<<endl;
+		afisare << "Nume client: " << f.numeClient << endl;
 		afisare << "Suma: " << f.suma << endl;
 
 		return afisare;
@@ -890,7 +983,9 @@ public:
 		citire >> f.suma;
 		return citire;
 	}
-}; 
+};
+
+
 
 int Magazin::nrMagazine = 10;
 int Client::numarClienti = 240;
@@ -1108,14 +1203,14 @@ int main() {
 	Factura f1, f3;
 	cout << "Constructor fara parametrii (Factura): " << endl;
 	cout << f1 << endl;
-	
+
 	cout << endl << "Constructor de copiere------------" << endl;
 	Factura f2 = f1;
 	cout << "Factura 2: " << endl << f2 << endl;
 
 	cout << endl << endl << "Operator = ---------------------" << endl;
 	f3 = f1;
-	cout <<"Factura 3: "<< endl<< f3 << endl;
+	cout << "Factura 3: " << endl << f3 << endl;
 
 	cout << endl << "Setteri si Getteri---------------------" << endl << endl;
 	f2.setNumeClient("Cristina ");
@@ -1139,12 +1234,12 @@ int main() {
 	bool fbool;
 	fbool = f2 >= f1;
 	cout << fbool << endl;
-	
-	cout<< endl << "Fisiere binare---------------------" << endl << endl;
+
+	cout << endl << "Fisiere binare---------------------" << endl << endl;
 	Magazin MagazinBinar;
 	m3.serializare("fisierBinar.dat");
 	MagazinBinar.deserializare("fisierBinar.dat");
-	cout << MagazinBinar << endl<<endl;
+	cout << MagazinBinar << endl << endl;
 
 	Client ClientBinar;
 	c1.serializare("fisierBinar.dat");
@@ -1153,7 +1248,7 @@ int main() {
 
 	cout << endl << "Fisiere text---------------------" << endl << endl;
 	ofstream f("tranzactie.txt", ios::out);
-	f << t3 << endl;
+	f << t4 << endl;
 	cout << "Obiectul a fost scris in text!" << endl;
 	f.close();
 	ifstream g("tranzactie.txt", ios::in);
@@ -1185,4 +1280,61 @@ int main() {
 		cout << "Fisierul nu exista!" << endl;
 	}
 	cout << f1 << endl;
+
+
+	float* istoricCumparaturi2 = new float[10]{ 9.2,73,62.8,21.8,89.5,47,91 ,32,67,89 };
+	ClientFidel cf1, cf2(1, 10, 5, "Carina M", "0788829321", 7, istoricCumparaturi), cf3(2, 15, 10, "Bogdan C", "0792186734", 10, istoricCumparaturi2);
+	cout << "Constructor fara parametrii (ClientFidel): " << endl;
+	cout << cf1 << endl;
+	cout << "Constructor cu toti parametrii (ClientFidel): " << endl;
+	cout << cf2 << endl;
+
+
+	cout << endl << "Constructor de copiere (Client fidel) ------------" << endl;
+	ClientFidel cf4 = cf2;
+	cout << "Client fidel 4: " << endl << cf4 << endl << endl;
+
+
+	cout << endl << "Getteri (Client fidel) ---------------------" << endl << endl;
+	cout << cf3.getIdClient() << endl;
+	cout << cf3.getPuncteBonus() << endl;
+
+
+	cout << endl << "Setteri (Client fidel) ---------------------" << endl << endl;
+	cf2.setIdClient(3);
+	cout << cf2.getIdClient() << endl;
+	cf2.setPuncteBonus(20);
+	cout << cf2.getPuncteBonus() << endl;
+
+	cout << endl << endl << "Operator = (Client fidel) ---------------------" << endl;
+	cf1 = cf3;
+	cout << cf1 << endl;
+
+	float* tranzactiiO = new float[1]{ 900.2 };
+	float* tranzactiiO1 = new float[2]{ 900.2,350.1 };
+	TranzactieOnline to1, to2(1, 10, "03.04.2019", "card", 1, tranzactiiO), to3(1,115,"15.06,2023","card",2, tranzactiiO1);
+
+	cout << "Constructor fara parametrii (Tranzactie Online): " << endl;
+	cout << to1 << endl;
+	cout << "Constructor cu toti parametrii (Tranzactie Online): " << endl;
+	cout << to2 << endl;
+
+
+	cout << endl << "Constructor de copiere (Tranzactie Online) ------------" << endl;
+	TranzactieOnline to4 = to2;
+	cout << "Tranzactie Online 4: " << endl << to4 << endl << endl;
+
+
+	cout << endl << "Getteri (Tranzactie Online) ---------------------" << endl << endl;
+	cout << to3.getConfirmareTranzactie() << endl;
+
+	cout << endl << "Setteri (Tranzactie Online) ---------------------" << endl << endl;
+	to3.setConfirmareTranzactie(0);
+	cout << to3.getConfirmareTranzactie() << endl;
+
+	cout << endl << endl << "Operator = (Tranzactie Online) ---------------------" << endl;
+	to1 = to3;
+	cout << to1 << endl;
+
+
 }
