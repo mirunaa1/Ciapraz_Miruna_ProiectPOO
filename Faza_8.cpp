@@ -11,7 +11,7 @@ public:
 };
 
 
-class Magazin:public ServiciiMagazin {
+class Magazin :public ServiciiMagazin {
 private:
 	const int taxa;
 	string numeMagazin;
@@ -23,7 +23,7 @@ private:
 
 public:
 
-	void ModificareStoc(int cantitate)  {
+	void ModificareStoc(int cantitate) {
 		cout << "Stocul se schimba in " << cantitate << endl;
 	}
 
@@ -297,12 +297,12 @@ void schimbareNumeMagazin(Magazin& m, string& numeNou) {
 	m.numeMagazin = numeNou;
 }
 
-class InformatiiClient {
+class ComandaEfectuata {
 public:
-	virtual void Afisare() = 0;
+	virtual void Efectuare() = 0;
 };
 
-class Client : public InformatiiClient{
+class Client : public ComandaEfectuata {
 private:
 	const int discount;
 	string numeClient;
@@ -313,8 +313,8 @@ private:
 
 public:
 
-	void Afisare() {
-		cout << "Nume: " << numeClient <<";"<< "Numar telefon: " << numarTelefon << endl;
+	void Efectuare() {
+		cout << "Clientul " << numeClient << " a efectuat comanda "<<numarComanda<<endl;
 	}
 
 	//Constructor fara parametrii
@@ -564,10 +564,11 @@ class ClientFidel : public Client {
 
 public:
 
-	void Afisare() {
-		Client::Afisare();
-		cout << "Id: " << idClient << ";" << "Bonus: " << puncteBonus << endl;
+	void Efectuare() {
+		Client::Efectuare();
+		cout << "si are id-ul " << idClient << " cu un bonus de " << puncteBonus << endl;
 	}
+	
 
 	ClientFidel() :Client() {
 		this->idClient = 0;
@@ -1148,81 +1149,81 @@ int main() {
 		cout << "Tranzactia 1 si Tranzactia 2 au numere diferite de tranzactii." << endl;
 	}
 
-	cout << endl;
-	cout << "Vector clasa Magazin------------------- " << endl;
-	int nrMagazine;
-	cout << "Introduceti numarul magazinelor: ";
-	cin >> nrMagazine;
-	Magazin* vectorMagazin = new Magazin[nrMagazine];
-	for (int i = 0; i < nrMagazine; i++) {
-		cout << "Magazinul " << i + 1 << ":" << endl;
-		cin >> vectorMagazin[i];
-	}
+	//cout << endl;
+	//cout << "Vector clasa Magazin------------------- " << endl;
+	//int nrMagazine;
+	//cout << "Introduceti numarul magazinelor: ";
+	//cin >> nrMagazine;
+	//Magazin* vectorMagazin = new Magazin[nrMagazine];
+	//for (int i = 0; i < nrMagazine; i++) {
+	//	cout << "Magazinul " << i + 1 << ":" << endl;
+	//	cin >> vectorMagazin[i];
+	//}
 
-	for (int i = 0; i < nrMagazine; i++) {
-		cout << vectorMagazin[i] << endl;
-	}
+	//for (int i = 0; i < nrMagazine; i++) {
+	//	cout << vectorMagazin[i] << endl;
+	//}
 
-	delete[]vectorMagazin;
+	//delete[]vectorMagazin;
 
-	cout << endl;
-	cout << "Vector clasa Client------------------- " << endl;
-	int nrClienti;
-	cout << "Introduceti numarul clientilor: ";
-	cin >> nrClienti;
-	Client* vectorClient = new Client[nrClienti];
-	for (int i = 0; i < nrClienti; i++) {
-		cout << "Clientul " << i + 1 << ":" << endl;
-		cin >> vectorClient[i];
-	}
-	for (int i = 0; i < nrClienti; i++) {
-		cout << vectorClient[i] << endl;
-	}
+	//cout << endl;
+	//cout << "Vector clasa Client------------------- " << endl;
+	//int nrClienti;
+	//cout << "Introduceti numarul clientilor: ";
+	//cin >> nrClienti;
+	//Client* vectorClient = new Client[nrClienti];
+	//for (int i = 0; i < nrClienti; i++) {
+	//	cout << "Clientul " << i + 1 << ":" << endl;
+	//	cin >> vectorClient[i];
+	//}
+	//for (int i = 0; i < nrClienti; i++) {
+	//	cout << vectorClient[i] << endl;
+	//}
 
-	delete[]vectorClient;
+	//delete[]vectorClient;
 
-	cout << endl;
-	cout << "Vector clasa Tranzactie------------------- " << endl;
-	int nrTranzactii;
-	cout << "Introduceti numarul tranzactiilor: ";
-	cin >> nrTranzactii;
-	Tranzactie* vectorTranzactie = new Tranzactie[nrTranzactii];
-	for (int i = 0; i < nrTranzactii; i++) {
-		cout << "Tranzactia " << i + 1 << ":" << endl;
-		cin >> vectorTranzactie[i];
-	}
-	for (int i = 0; i < nrTranzactii; i++) {
-		cout << vectorTranzactie[i] << endl;
-	}
+	//cout << endl;
+	//cout << "Vector clasa Tranzactie------------------- " << endl;
+	//int nrTranzactii;
+	//cout << "Introduceti numarul tranzactiilor: ";
+	//cin >> nrTranzactii;
+	//Tranzactie* vectorTranzactie = new Tranzactie[nrTranzactii];
+	//for (int i = 0; i < nrTranzactii; i++) {
+	//	cout << "Tranzactia " << i + 1 << ":" << endl;
+	//	cin >> vectorTranzactie[i];
+	//}
+	//for (int i = 0; i < nrTranzactii; i++) {
+	//	cout << vectorTranzactie[i] << endl;
+	//}
 
-	delete[]vectorTranzactie;
+	//delete[]vectorTranzactie;
 
-	cout << endl;
-	cout << "Matrice clasa Magazin------------------- " << endl;
-	int numarDeLinii, numarDeColoane;
-	cout << "Introduceti numarul de linii pentru matricea clasei Magazin: ";
-	cin >> numarDeLinii;
-	cout << "Introduceti numarul de coloane pentru matricea clasei Magazin: ";
-	cin >> numarDeColoane;
-	Magazin** matriceMagazin = new Magazin * [numarDeLinii];
-	for (int i = 0; i < numarDeLinii; i++) {
-		matriceMagazin[i] = new Magazin[numarDeColoane];
-	}
+	//cout << endl;
+	//cout << "Matrice clasa Magazin------------------- " << endl;
+	//int numarDeLinii, numarDeColoane;
+	//cout << "Introduceti numarul de linii pentru matricea clasei Magazin: ";
+	//cin >> numarDeLinii;
+	//cout << "Introduceti numarul de coloane pentru matricea clasei Magazin: ";
+	//cin >> numarDeColoane;
+	//Magazin** matriceMagazin = new Magazin * [numarDeLinii];
+	//for (int i = 0; i < numarDeLinii; i++) {
+	//	matriceMagazin[i] = new Magazin[numarDeColoane];
+	//}
 
-	for (int i = 0; i < numarDeLinii; i++) {
-		for (int j = 0; j < numarDeColoane; j++) {
-			cout << "Introduceti informatiile magazinului [" << i + 1 << "][" << j + 1 << "]:\n";
-			cin >> matriceMagazin[i][j];
+	//for (int i = 0; i < numarDeLinii; i++) {
+	//	for (int j = 0; j < numarDeColoane; j++) {
+	//		cout << "Introduceti informatiile magazinului [" << i + 1 << "][" << j + 1 << "]:\n";
+	//		cin >> matriceMagazin[i][j];
 
-		}
-	}
+	//	}
+	//}
 
-	for (int i = 0; i < numarDeLinii; i++) {
-		for (int j = 0; j < numarDeColoane; j++) {
-			cout << "Magazinul [" << i + 1 << "][" << j + 1 << "]:\n";
-			cout << matriceMagazin[i][j];
-		}
-	}
+	//for (int i = 0; i < numarDeLinii; i++) {
+	//	for (int j = 0; j < numarDeColoane; j++) {
+	//		cout << "Magazinul [" << i + 1 << "][" << j + 1 << "]:\n";
+	//		cout << matriceMagazin[i][j];
+	//	}
+	//}
 
 	Factura f1, f3;
 	cout << "Constructor fara parametrii (Factura): " << endl;
@@ -1361,8 +1362,8 @@ int main() {
 	cout << to1 << endl;
 
 	cout << "Clase abstracte------------------------------" << endl;
-	cout << "Clasa InformatiiClient------------" << endl<<endl;
-	InformatiiClient** vector1 = new InformatiiClient* [10];
+	cout << "Clasa ComandaEfectuata------------" << endl << endl;
+	ComandaEfectuata** vector1 = new ComandaEfectuata * [10];
 	vector1[0] = &c4;
 	vector1[1] = &c2;
 	vector1[2] = &cf2;
@@ -1373,12 +1374,12 @@ int main() {
 	vector1[7] = &c4;
 	vector1[8] = &cf2;
 	vector1[9] = &c2;
-	
+
 	for (int i = 0; i < 10; ++i) {
-		vector1[i]->Afisare();
+		vector1[i]->Efectuare();
 	}
 
-	cout << endl<<"Clasa ServiciiMagazin------------" << endl << endl;
+	cout << endl << "Clasa ServiciiMagazin------------" << endl << endl;
 	ServiciiMagazin** vector = new ServiciiMagazin * [10];
 	vector[0] = &m1;
 	vector[1] = &m2;
