@@ -5,7 +5,13 @@
 using namespace std;
 
 
-class Magazin {
+class ServiciiMagazin {
+public:
+	virtual void ModificareStoc(int cantitate) = 0;
+};
+
+
+class Magazin:public ServiciiMagazin {
 private:
 	const int taxa;
 	string numeMagazin;
@@ -16,6 +22,10 @@ private:
 	static int nrMagazine; //total magazine din lant
 
 public:
+
+	void ModificareStoc(int cantitate)  {
+		cout << "Stocul se schimba in " << cantitate << endl;
+	}
 
 	//Constructor fara parametrii
 	Magazin() :taxa(1) {
@@ -280,14 +290,19 @@ public:
 
 };
 
+
 //functie globala
 void schimbareNumeMagazin(Magazin& m, string& numeNou) {
 	cout << "Numele magazinului se schimba din " << m.numeMagazin << " in " << numeNou << endl;
 	m.numeMagazin = numeNou;
 }
 
+class InformatiiClient {
+public:
+	virtual void Afisare() = 0;
+};
 
-class Client {
+class Client : public InformatiiClient{
 private:
 	const int discount;
 	string numeClient;
@@ -297,6 +312,10 @@ private:
 	static int numarClienti; //numarul de clienti inregistrati in sistem
 
 public:
+
+	void Afisare() {
+		cout << "Nume: " << numeClient <<";"<< "Numar telefon: " << numarTelefon << endl;
+	}
 
 	//Constructor fara parametrii
 	Client() :discount(1) {
@@ -545,6 +564,11 @@ class ClientFidel : public Client {
 
 public:
 
+	void Afisare() {
+		Client::Afisare();
+		cout << "Id: " << idClient << ";" << "Bonus: " << puncteBonus << endl;
+	}
+
 	ClientFidel() :Client() {
 		this->idClient = 0;
 		this->puncteBonus = 0;
@@ -558,7 +582,7 @@ public:
 	ClientFidel(const ClientFidel& c) :Client(c) {
 		this->idClient = c.idClient;
 		this->puncteBonus = c.puncteBonus;
-		} 
+	}
 
 	ClientFidel operator=(const ClientFidel& c) {
 		if (this != &c) {
@@ -587,7 +611,7 @@ public:
 
 	friend ostream& operator<<(ostream& afisare, ClientFidel& c) {
 		afisare << (Client)c;
-		afisare << "Id client: " << c.idClient<<endl;
+		afisare << "Id client: " << c.idClient << endl;
 		afisare << "Puncte bonus: " << c.puncteBonus << endl;
 		return afisare;
 	}
@@ -799,10 +823,10 @@ public:
 
 };
 
-class TranzactieOnline:public Tranzactie {
+class TranzactieOnline :public Tranzactie {
 	bool confirmareTranzactie;
-	
-public: 
+
+public:
 	TranzactieOnline() :Tranzactie() {
 		this->confirmareTranzactie = 0;
 	}
@@ -1312,7 +1336,7 @@ int main() {
 
 	float* tranzactiiO = new float[1]{ 900.2 };
 	float* tranzactiiO1 = new float[2]{ 900.2,350.1 };
-	TranzactieOnline to1, to2(1, 10, "03.04.2019", "card", 1, tranzactiiO), to3(1,115,"15.06,2023","card",2, tranzactiiO1);
+	TranzactieOnline to1, to2(1, 10, "03.04.2019", "card", 1, tranzactiiO), to3(1, 115, "15.06,2023", "card", 2, tranzactiiO1);
 
 	cout << "Constructor fara parametrii (Tranzactie Online): " << endl;
 	cout << to1 << endl;
@@ -1336,5 +1360,39 @@ int main() {
 	to1 = to3;
 	cout << to1 << endl;
 
+	cout << "Clase abstracte------------------------------" << endl;
+	cout << "Clasa InformatiiClient------------" << endl<<endl;
+	InformatiiClient** vector1 = new InformatiiClient* [10];
+	vector1[0] = &c4;
+	vector1[1] = &c2;
+	vector1[2] = &cf2;
+	vector1[3] = &c3;
+	vector1[4] = &cf3;
+	vector1[5] = &cf1;
+	vector1[6] = &c3;
+	vector1[7] = &c4;
+	vector1[8] = &cf2;
+	vector1[9] = &c2;
+	
+	for (int i = 0; i < 10; ++i) {
+		vector1[i]->Afisare();
+	}
+
+	cout << endl<<"Clasa ServiciiMagazin------------" << endl << endl;
+	ServiciiMagazin** vector = new ServiciiMagazin * [10];
+	vector[0] = &m1;
+	vector[1] = &m2;
+	vector[2] = &m3;
+	vector[3] = &m2;
+	vector[4] = &m1;
+	vector[5] = &m2;
+	vector[6] = &m2;
+	vector[7] = &m3;
+	vector[8] = &m4;
+	vector[9] = &m3;
+
+	for (int i = 0; i < 10; ++i) {
+		vector[i]->ModificareStoc(5);
+	}
 
 }
